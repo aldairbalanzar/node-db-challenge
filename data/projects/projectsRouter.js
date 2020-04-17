@@ -11,6 +11,13 @@ router.get('/', (req, res) => {
   .catch(err => res.status(500).json({ message: 'Failed to get data for projects.'}))
 });
 
+//fetches all resources
+router.get('/resources', (req, res) => {
+    Projects.findAllResources()
+    .then(resources => res.status(200).json(resources))
+    .catch(err => res.status(500).json({ message: 'Failed to get data for projects.'}))
+});
+
 //fetches particular project
 router.get('/:id', (req, res) => {
   Projects.findById(req.params.id)
@@ -80,7 +87,7 @@ router.post('/:id/tasks', (req, res) => {
   Projects.findById(req.params.id)
   .then(project => {
     project
-    ?Projects.addTask(req.body)
+    ?Projects.addTask(req.body, req.params.id)
     .then(task => {
       res.status(201).json({ message: "susccesfuly added task." });
     })
@@ -98,7 +105,7 @@ router.post('/:id/resources', (req, res) => {
   Projects.findById(req.params.id)
   .then(project => {
     project
-    ?Projects.addResource(req.body)
+    ?Projects.addResource(req.body, req.params.id)
     .then(resource => {
       res.status(201).json({ message: "susccesfuly added resource." });
     })

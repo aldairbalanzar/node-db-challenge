@@ -5,9 +5,11 @@ module.exports = {
     findById,
     add,
     findTasks,
+    findAllResources,
     addTask,
     findResources,
-    addResource
+    addResource,
+    addKeys
 }
 
 function find(){
@@ -30,23 +32,11 @@ function findTasks(id){
     .where('projects.id', id)
 };
 
-function add(project){
-    return db("projects")
-    .insert(project, "id")
-    .then(([id]) => {
-      return findById(id);
-    });
-};
+function findAllResources(){
+    return db('resources')
+}
 
-function addTask(newTask){
-    return db('tasks')
-      .insert(newTask)
-      .then(ids => {
-          return ids
-      })
-  };
-
-  function findResources(id){
+function findResources(id){
     return db('projects')
     .select('resourceName')
     .from('projects_resources')
@@ -55,9 +45,32 @@ function addTask(newTask){
     'resources.id')
   };
 
-  function addResource(newResource){
-    return db('resources')
-    .insert({resourceName: newResource})
-    .then(db('projects_resources')
-            .insert([{project_id: projectId, resource_id: resourceId}]))
+function add(project){
+    return db("projects")
+    .insert(project, "id")
+    .then(([id]) => {
+      return findById(id);
+    });
+};
+
+function addTask(newTask, id){
+    return db('tasks')
+      .insert(newTask, 'id')
+      .then(() => {
+          return findTasks(id)
+      })
   };
+
+  function addResource(newResource, id){
+    return db('resources')
+    .where('project_id')
+    .insert(newResource, 'id')
+  };
+
+  function addKeys(project_id) {
+    return db('project_resources')
+        .where('project_id', id)
+        .insert(project_id);
+}
+
+
