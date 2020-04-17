@@ -22,19 +22,21 @@ exports.up = function(knex) {
         })
 
         .createTable('projects_resources', tbl => {
-            tbl.integer('id', 255).primary();
             //project foreign key
             tbl.integer('project_id', 255)
             .notNullable()
             .references('projects.id')
             .onDelete('RESTRICT')
             .onUpdate('CASCADE');
+
             //resources foreign key
-            tbl.integer('resource_id')
+            tbl.integer('resource_id', 255)
             .notNullable()
             .references('resources.id')
             .onDelete('RESTRICT')
             .onUpdate('CASCADE');
+
+            tbl.primary(['project_id', 'resource_id']);
         })
     )
 };
