@@ -9,7 +9,8 @@ module.exports = {
     addTask,
     findResources,
     addResource,
-    addKeys
+    insertResource,
+    // addKeys
 }
 
 function find(){
@@ -65,12 +66,27 @@ function addTask(newTask, id){
     return db('resources')
     .where('project_id')
     .insert(newResource, 'id')
+    .then(db('projects_resources'))
   };
 
-  function addKeys(project_id) {
-    return db('project_resources')
-        .where('project_id', id)
-        .insert(project_id);
+  function insertResource( project_id, resource ){ 
+        return db('resources')    
+            .insert(resource)    
+            .then( ids => { return db( 'projects_resources' ) 
+            .insert({ project_id: project_id, resource_id: ids[0] })        
+            .then( () => {          
+            return db( 'resources' )          
+            .where( { id: ids[ 0 ] } )          
+            .first();        
+            });    
+        } 
+    );
 }
+
+//   function addKeys(project_id) {
+//     return db('project_resources')
+//         .where('project_id', id)
+//         .insert(project_id);
+// }
 
 

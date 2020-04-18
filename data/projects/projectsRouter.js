@@ -3,11 +3,19 @@ const express = require('express');
 const router = express.Router();
 
 const Projects = require('./projects-model');
-
+// projects => res.status(200).json(projects)
 //fetches list of projects
 router.get('/', (req, res) => {
+  let finalProject
   Projects.find()
-  .then(projects => res.status(200).json(projects))
+  .then(projects => {
+    projects.map(project => {
+    project.completed === 0
+    ?project.completed = false
+    :project.complete = true
+  })
+  finalProject = projects
+  res.status(200).json(finalProject)})
   .catch(err => res.status(500).json({ message: 'Failed to get data for projects.'}))
 });
 
@@ -105,7 +113,7 @@ router.post('/:id/resources', (req, res) => {
   Projects.findById(req.params.id)
   .then(project => {
     project
-    ?Projects.addResource(req.body, req.params.id)
+    ?Projects.insertResource(req.params.id, req.body)
     .then(resource => {
       res.status(201).json({ message: "susccesfuly added resource." });
     })
